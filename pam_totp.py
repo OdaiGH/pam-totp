@@ -23,10 +23,10 @@ def pam_sm_authenticate(pamh, flags, argv):
     try:
         user = pamh.get_user()
         user_secret = get_user_secret_key(user)
-    except pamh.exception, e:
+    except pamh.exception as e:
         return e.pam_result
     if user == "root":
-	return pamh.PAM_SUCCESS 
+        return pamh.PAM_SUCCESS
     if user is None or user_secret == -1:
         msg = pamh.Message(pamh.PAM_ERROR_MSG,
                            'Something went wrong. Contact your System Adminstrator'

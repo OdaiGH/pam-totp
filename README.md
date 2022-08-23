@@ -27,6 +27,11 @@ it will ask for both your password and your otp
 ![image](https://user-images.githubusercontent.com/2572236/186054741-bfc2a1ce-10af-4556-8309-2e5d710f3357.png)
 
 
+even ssh reqiures you to enter your otp
+
+![image](https://user-images.githubusercontent.com/2572236/186056218-54c73611-f07b-4e92-b7b0-8ec20b025311.png)
+
+
 
 use this website to verify your otp  https://totp.app/
 

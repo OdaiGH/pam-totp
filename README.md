@@ -27,4 +27,7 @@ it will ask for both your password and your otp
 ![image](https://user-images.githubusercontent.com/2572236/186054741-bfc2a1ce-10af-4556-8309-2e5d710f3357.png)
 
 
+
 use this website to verify your otp  https://totp.app/
+
+you could also use google authenticator, you just need to add your key

@@ -1,38 +1,46 @@
-# pam-totp
+# totp-pam-secure
 
-PAM TOTP is a Linux Pluggable Authentication Module (PAM) that enables 2fa using a Time-based OTP method
+A Python-based TOTP (Time-Based One-Time Password) authentication system for Linux with:
 
-# Installation
+- OpenSSL AES-256 encrypted secrets
+- PAM module integration for login authentication
+- CLI tools for initializing TOTP for users and resetting passwords
+- Flexible configuration via environment variables or CLI options
+- Root-only access for security, with root/admin bypass
 
-* you need to install `pam-python` . Check this repo https://github.com/stackhpc/pam-python
+---
 
-* clone this project and add the following line
+## installation
 
-`auth       requisite     pam_python.so /PATH/TO/THE/CODE/pam_totp.py`
+### 1. install deps
+sudo apt update
+sudo apt install python3 python3-pip openssl -y
+pip3 install pyotp
 
-to the end of file  `/etc/pam.d/common-auth`
+### 2. generate master key 
+sudo openssl rand -base64 32 > /etc/totp_master.key
+sudo chmod 600 /etc/totp_master.key
+export TOTP_MASTER_KEY=/etc/totp_master.key
 
-# Setup
-each user  must have his own secret key use and we will do this by using this command:
+### 3. create secret dir 
+sudo mkdir /etc/totp_secrets_encrypted
+sudo chmod 700 /etc/totp_secrets_encrypted
+export TOTP_SECRETS_DIR=/etc/totp_secrets_encrypted
 
-`usermod user -c "abcdabcd"`
+## Usage 
 
-now when you switch to user by using
+### 1. create key for a user
+sudo python3 totp_init.py -U username
 
-`su user`
+copy and paste into one of the autheticator apps like google-authenticator
 
-it will ask for both your password and your otp
+### 2. resetting
+sudo python3 totp_reset_password.py -U odai
 
+### 3. add to pam
+#### Edit PAM configuration file (e.g., /etc/pam.d/sshd) and add:
+auth required pam_exec.so expose_authtok /usr/lib/security/pam_totp.py
 
-![image](https://user-images.githubusercontent.com/2572236/186054741-bfc2a1ce-10af-4556-8309-2e5d710f3357.png)
-
-
-even ssh reqiures you to enter your otp
-
-![image](https://user-images.githubusercontent.com/2572236/186056218-54c73611-f07b-4e92-b7b0-8ec20b025311.png)
-
+#### sudo chmod 755 /usr/lib/security/pam_totp.py
 
 
-use this website to verify your otp  https://totp.app/
-
-you could also use google authenticator, you just need to add your key

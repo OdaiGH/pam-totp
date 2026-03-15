@@ -8,6 +8,7 @@ import getpass
 import pyotp
 import syslog
 import pwd
+import argparse
 
 DEFAULT_SECRETS_DIR = "/etc/totp_secrets_encrypted"
 
@@ -64,17 +65,22 @@ def main():
         print(f"Error: Secrets directory {secrets_dir} missing!")
         sys.exit(1)
 
-    user = input("Enter username: ").strip()
+    parser = argparse.ArgumentParser(description="Reset user password via TOTP")
+    parser.add_argument("-U", "--username", required=True, help="Username to reset password for")
+    args = parser.parse_args()
+
+    user = args.username
+
     if not user_exists(user):
-        print("User does not exist.")
+        print(f"Error: User '{user}' does not exist")
         sys.exit(1)
 
     secret = decrypt_secret(user, key_file, secrets_dir)
     if not secret:
-        print("Error: Could not read TOTP secret for user.")
+        print(f"Error: Could not read TOTP secret for user '{user}'")
         sys.exit(1)
 
-    for _ in range(3):
+    for attempt in range(3):
         code = getpass.getpass("Enter TOTP code: ")
         if verify_otp(secret, code):
             print("TOTP verified! Resetting password...")
